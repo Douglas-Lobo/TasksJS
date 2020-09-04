@@ -1,28 +1,60 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+   <section class="hero is-fullheight">
+  <div class="hero-body has-text-centered">
+    <div class="container">
+        <NewTask
+          @add-task='newTask'
+        />
+          <TaskGrid v-if="tasks.length"
+          @task-state-changed="toggleTaskState" 
+          @task-delete='taskDelete'
+          :tasks='tasks' 
+           />
+           <p v-else>Adicione uma tarefa!!</p>
+    </div>
   </div>
+</section>
+
+ 
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TaskGrid from "./components/TaskGrid.vue";
+import NewTask from "./components/NewTask.vue";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  components:{ TaskGrid, NewTask },
+  data(){
+    return{
+      tasks: []
+    }
+  },
+  methods:{
+    toggleTaskState(i){
+        this.tasks[i].pending = !this.tasks[i].pending
+    },
+    taskDelete(i){
+        this.tasks.splice(i,1)
+    },
+    newTask(task){
+          const sameName = t =>t.name === task.name
+          const reallyNew = this.tasks.filter(sameName).length == 0
+          if (reallyNew) {
+              this.tasks.push({
+                name: task.name,
+                pending: task.pending || true
+              })
+          }
+    }
   }
+
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped>
+  
+  h1{
+    font-size: 3rem;
+  }
+
 </style>
